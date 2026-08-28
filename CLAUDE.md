@@ -50,6 +50,15 @@ Upstream is wired-only (USB-C from a wall adapter). We're adding:
   USB-C-to-C charging (independently confirmed necessary both by our own
   ESP32-HARDWARE-PLAYBOOK.md from BusGlance, and by a real OpenChess builder in
   the MakerWorld comments who hit the exact same issue).
+- **External USB-C access: panel-mount pigtail (male plug → female chassis
+  jack), plugged into the ESP32's native onboard port — NOT a bare
+  solder-in "2P" power-only jack.** Confirmed 2026-08-28 by live-testing this
+  exact pigtail style on Bubble's ESP32: it enumerated as a proper
+  `/dev/cu.usbserial-*` device and returned real serial byte traffic, proving
+  it passes full USB data lines, not just power. This means **one relocated
+  jack handles both charging AND flashing** — no need for a second, separate
+  bare-wire power-only panel jack soldered to the 5V rail (that product is
+  redundant once you have a full-data pigtail; dropped from the BOM).
 - **Realistic power draw estimate:** ~250-350mA average during active play
   (ESP32+WiFi dominates at ~150-250mA; sensor matrix only powers one column of 8
   at a time via the shift register, ~50-70mA; LEDs are ~0 at rest, brief spikes
@@ -160,7 +169,8 @@ committing wiring).
 - 64× neodymium magnets, 8×2mm N35 (2 stacked per piece × 32 pieces)
 - WS2812B LED strip, 30 LEDs/m, ~3m (64 used)
 - 1× 74HC595 shift register (DIP-16)
-- 1× USB-C female port
+- 1× USB-C panel-mount pigtail (male plug → female chassis jack, full data
+  lines, NOT a bare-wire power-only "2P solder" jack — see Power section above)
 - 8× 10kΩ resistors (sensor pull-ups) + 8× 1kΩ (transistor bases) + 2× 100kΩ
   (battery divider) + 2× 5.1kΩ (USB-C CC pulldowns) — all covered by one 600pc
   30-value 1/4W assortment kit
