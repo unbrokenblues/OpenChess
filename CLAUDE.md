@@ -223,12 +223,50 @@ digital caliper (measuring fit/tolerances), flush cutters, wire strippers.
 
 ---
 
+## Power switch (resolved 2026-08-29)
+
+Since the ESP32 board runs continuously off battery with no sleep logic yet,
+an inline power switch is needed — otherwise it drains a full charge in
+~6-7 hours whether or not anyone is playing.
+
+**Chosen part: 12V rocker switch (SPST, 2-pin, 6A/250V AC — 10A/125V,
+bare-wire pigtail leads), spliced into a JST-PH 2.0mm extension cable.**
+Massively over-rated for this system's actual ~250-350mA average draw (that's
+fine — over-rating a switch is never a problem, only under-rating is).
+
+**Wiring — the one thing that caused real confusion, worth getting right:**
+a switch interrupts only the **positive (red) wire**. The black/ground wire
+runs straight through, joined directly battery-black-to-board-black, and
+never touches the switch at all. Concretely: cut the JST-PH extension cable
+partway along its length → rejoin the two black wire stubs directly to each
+other (a normal solder joint, not "loose") → splice the switch's two bare
+leads into the two red wire stubs (one on the battery side, one on the board
+side). The switch's own factory wire colors (also red/black, since that's
+just this manufacturer's leads) are irrelevant to which one goes where —
+both of the switch's leads land on the circuit's red wire only, regardless of
+their own coloring.
+
+---
+
+## Confirmed cost (as of 2026-08-29)
+
+**Direct chessboard-specific cost: ≈ $56.21 SGD (~$42 USD)** — every part
+bought specifically for this build (ESP32, Hall sensors, LED strip, shift
+register, iron discs, magnets, resistor kit, transistor kit, perfboard, wire,
+epoxy, JST-PH cable, switch). Excludes items that are actually shared stock
+across multiple projects and not a direct cost of this one: digital caliper,
+soldering-iron cleaning ball, electrical tape (all reusable across future
+builds), plus the level shifter/battery/solder wire which were already owned
+at zero marginal cost.
+
+---
+
 ## Open items / TODO
+- [x] Decide on the on/off switch + wiring approach — see Power switch section
+- [x] Decide felt sheet — **skipping it**, purely optional/cosmetic either way
 - [ ] Decide chess piece source (reuse existing set vs. print a separate model)
 - [ ] Verify actual board's GPIO pin map once ESP32 is in hand (confirm classic
       ESP32 vs S3, confirm GPIO35 truly reads battery voltage via ADC scan)
-- [ ] Decide felt sheet / re-felting approach for piece bases (optional,
-      depends on piece source decision)
 - [ ] Write the actual custom firmware (sensor scan + LED driver + WiFi bridge
       to Mac-hosted Stockfish/python-chess script)
 - [ ] Write the Mac-side Stockfish bridge + companion webpage
